@@ -2,3 +2,16 @@
   <%= text_field_tag :query, params[:query], placeholder: 'Search for movies' %>
   <%= submit_tag 'Search' %>
 <% end %>
+
+<% if flash[:alert] %>
+  <p class="error"><%= flash[:alert] %></p>
+<% end %>
+
+
+<% if @movies.present? %>
+  <ul id="movies">
+    <% @movies.each do |movie| %>
+      <li class="movie"><%= movie["title"] %></li>
+    <% end %>
+  </ul>
+<% end %>
