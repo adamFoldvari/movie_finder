@@ -1,25 +1,57 @@
-<%= form_tag movies_path, method: :get do %>
-  <%= text_field_tag :query, params[:query], placeholder: 'Search for movies' %>
-  <%= submit_tag 'Search' %>
-<% end %>
+<div class="container">
+  <%= form_tag movies_path, method: :get, class: "mt-4" do %>
+    <div class="input-group">
+      <%= text_field_tag :query, params[:query], class: "form-control", placeholder: 'Search for movies' %>
+      <button type="submit" class="btn btn-primary">Search</button>
+    </div>
+  <% end %>
 
-<% if flash[:alert] %>
-  <p class="error"><%= flash[:alert] %></p>
-<% end %>
+  <% if flash[:alert] %>
+    <div class="alert alert-danger mt-3">
+      <p><%= flash[:alert] %></p>
+    </div>
+  <% end %>
 
-
-<% if @movies.present? %>
-  <ul id="movies">
-    <% @movies.each do |movie| %>
-      <li class="movie"><%= movie["title"] %></li>
+  <div class="row mt-4">
+    <% if @movies.present? %>
+      <% @movies.in_groups_of(4, false) do |group| %>
+        <div id="movies" class="row">
+          <% group.each do |movie| %>
+            <div class="col-md-3 mb-4">
+              <div class="card movie">
+                <% if movie.present? && movie["poster_path"].present? %>
+                  <img src="<%= "https://image.tmdb.org/t/p/w300/#{movie["poster_path"]}" %>" class="card-img-top" alt="<%= movie["title"] %> Poster">
+                <% end %>
+                <div class="card-body">
+                  <h5 class="card-title"><%= movie["title"] %></h5>
+                </div>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
     <% end %>
-  </ul>
-<% end %>
-
-<% if @total_pages && @total_pages > 1 %>
-  <div class="pagination">
-      <p>Page <%= @current_page %> of <%= @total_pages %></p>
-      <%= link_to "Previous", movies_path(query: params[:query], page: @current_page - 1), class: "prev" if @current_page > 1 %>
-      <%= link_to "Next", movies_path(query: params[:query], page: @current_page + 1), class: "next" if @current_page < @total_pages %>
   </div>
-<% end %>
+
+  <% if @total_pages && @total_pages > 1 %>
+    <nav aria-label="Page navigation" class="mt-4">
+      <ul class="pagination">
+        <% if @current_page > 1 %>
+          <li class="page-item">
+            <%= link_to "Previous", movies_path(query: params[:query], page: @current_page - 1), class: "page-link" %>
+          </li>
+        <% end %>
+
+        <li class="page-item disabled">
+          <p class="page-link">Page <%= @current_page %> of <%= @total_pages %></p>
+        </li>
+
+        <% if @current_page < @total_pages %>
+          <li class="page-item">
+            <%= link_to "Next", movies_path(query: params[:query], page: @current_page + 1), class: "page-link" %>
+          </li>
+        <% end %>
+      </ul>
+    </nav>
+  <% end %>
+</div>

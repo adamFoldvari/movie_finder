@@ -17,36 +17,44 @@ RSpec.describe "Movies", type: :request do
       it 'renders input box and search button' do
         expect(response.body).to have_tag('form', with: { action: movies_path, method: 'get' }) do
           with_tag 'input', with: { type: 'text', name: 'query' }
-          with_tag 'input', with: { type: 'submit', value: 'Search' }
+          with_tag 'button', text: 'Search', with: { type: 'submit' }
         end
       end
 
       it 'does not render movie list' do
-        expect(response.body).not_to have_tag('ul#movies')
-        expect(response.body).not_to have_tag('li.movie')
+        expect(response.body).not_to have_tag('div#movies.row.mt-4')
+        expect(response.body).not_to have_tag('div.movie.card')
       end
 
       it 'does not render pagination controls' do
-        expect(response.body).not_to have_tag('div.pagination')
+        expect(response.body).not_to have_tag('nav.mt-4') do
+          without_tag 'ul.pagination'
+        end
       end
     end
 
     context 'there is a query and result' do
-
       context 'without pagination' do
         before do
-          stub_movies_api query, {results: [title: 'Batman']}.to_json
+          stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
           get movies_path, params: { query: query }
         end
 
         it 'renders movie list' do
-          expect(response.body).to have_tag('ul#movies') do
-            with_tag 'li.movie', text: 'Batman'
+          expect(response.body).to have_tag('div#movies.row') do
+            with_tag('div.col-md-3.mb-4') do
+              with_tag 'div.card' do
+                with_tag 'img.card-img-top', with: { src: 'https://image.tmdb.org/t/p/w300/poster.jpg' }
+                with_tag 'h5.card-title', text: 'Batman'
+              end
+            end
           end
         end
 
         it 'does not render pagination controls' do
-          expect(response.body).not_to have_tag('div.pagination')
+          expect(response.body).not_to have_tag('nav.mt-4') do
+            without_tag 'ul.pagination'
+          end
         end
       end
 
@@ -58,9 +66,15 @@ RSpec.describe "Movies", type: :request do
           end
 
           it 'renders pagination button for next page' do
-            expect(response.body).to have_tag('div.pagination') do
-              with_tag 'p', text: 'Page 1 of 2'
-              with_tag 'a.next', text: 'Next', with: { href: movies_path(query: query, page: 2) }
+            expect(response.body).to have_tag('nav.mt-4') do
+              with_tag 'ul.pagination' do
+                with_tag 'li.page-item.disabled' do
+                  with_tag 'p.page-link', text: "Page 1 of 2"
+                end
+                with_tag 'li.page-item' do
+                  with_tag 'a.page-link', text: 'Next', with: { href: movies_path(query: query, page: 2) }
+                end
+              end
             end
           end
         end
@@ -72,10 +86,18 @@ RSpec.describe "Movies", type: :request do
           end
 
           it 'renders pagination controls' do
-            expect(response.body).to have_tag('div.pagination') do
-              with_tag 'p', text: 'Page 2 of 3'
-              with_tag 'a.prev', text: 'Previous', with: { href: movies_path(query: query, page: 1) }
-              with_tag 'a.next', text: 'Next', with: { href: movies_path(query: query, page: 3) }
+            expect(response.body).to have_tag('nav.mt-4') do
+              with_tag 'ul.pagination' do
+                with_tag 'li.page-item' do
+                  with_tag 'a.page-link', text: 'Previous', with: { href: movies_path(query: query, page: 1) }
+                end
+                with_tag 'li.page-item.disabled' do
+                  with_tag 'p.page-link', text: "Page 2 of 3"
+                end
+                with_tag 'li.page-item' do
+                  with_tag 'a.page-link', text: 'Next', with: { href: movies_path(query: query, page: 3) }
+                end
+              end
             end
           end
         end
@@ -87,9 +109,15 @@ RSpec.describe "Movies", type: :request do
           end
 
           it 'renders pagination controls' do
-            expect(response.body).to have_tag('div.pagination') do
-              with_tag 'p', text: 'Page 2 of 2'
-              with_tag 'a.prev', text: 'Previous', with: { href: movies_path(query: query, page: 1) }
+            expect(response.body).to have_tag('nav.mt-4') do
+              with_tag 'ul.pagination' do
+                with_tag 'li.page-item' do
+                  with_tag 'a.page-link', text: 'Previous', with: { href: movies_path(query: query, page: 1) }
+                end
+                with_tag 'li.page-item.disabled' do
+                  with_tag 'p.page-link', text: "Page 2 of 2"
+                end
+              end
             end
           end
         end
@@ -107,12 +135,20 @@ RSpec.describe "Movies", type: :request do
       end
 
       it 'renders the flash message' do
-        expect(response.body).to have_tag('p.error', text: 'Error: 404')
+        expect(response.body).to have_tag('div.alert.alert-danger.mt-3') do
+          with_tag 'p', text: 'Error: 404'
+        end
       end
 
       it 'does not render movie list' do
-        expect(response.body).not_to have_tag('ul#movies')
-        expect(response.body).not_to have_tag('li.movie')
+        expect(response.body).not_to have_tag('div#movies.row.mt-4')
+        expect(response.body).not_to have_tag('div.movie.card')
+      end
+
+      it 'does not render pagination controls' do
+        expect(response.body).not_to have_tag('nav.mt-4') do
+          without_tag 'ul.pagination'
+        end
       end
     end
 
@@ -127,12 +163,20 @@ RSpec.describe "Movies", type: :request do
       end
 
       it 'renders the flash message' do
-        expect(response.body).to have_tag('p.error', text: 'Network error: Unable to connect to the movie database API.')
+        expect(response.body).to have_tag('div.alert.alert-danger.mt-3') do
+          with_tag 'p', text: 'Network error: Unable to connect to the movie database API.'
+        end
       end
 
       it 'does not render movie list' do
-        expect(response.body).not_to have_tag('ul#movies')
-        expect(response.body).not_to have_tag('li.movie')
+        expect(response.body).not_to have_tag('div#movies.row.mt-4')
+        expect(response.body).not_to have_tag('div.movie.card')
+      end
+
+      it 'does not render pagination controls' do
+        expect(response.body).not_to have_tag('nav.mt-4') do
+          without_tag 'ul.pagination'
+        end
       end
     end
   end
