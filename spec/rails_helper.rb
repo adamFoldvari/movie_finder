@@ -5,6 +5,8 @@ require_relative '../config/environment'
 # Prevent database truncation if the environment is production
 abort("The Rails environment is running in production mode!") if Rails.env.production?
 require 'rspec/rails'
+require 'rspec-html-matchers'
+
 # Add additional requires below this line. Rails is not loaded until this point!
 
 # Requires supporting ruby files with custom matchers and macros, etc, in
@@ -23,6 +25,7 @@ require 'rspec/rails'
 # Dir[Rails.root.join('spec', 'support', '**', '*.rb')].sort.each { |f| require f }
 
 RSpec.configure do |config|
+  config.include RSpecHtmlMatchers
   # Remove this line to enable support for ActiveRecord
   config.use_active_record = false
 
