@@ -6,7 +6,7 @@ RSpec.describe MoviesClient do
   subject(:movies_client) { described_class.new }
 
   describe '#search' do
-    it 'sends an HTTP GET request with the proper headers' do
+    it 'returns the response from MOVIES_API_URL' do
       stub_movies_api 'search_query', 'Response data'
 
       response = movies_client.search 'search_query'
@@ -15,10 +15,19 @@ RSpec.describe MoviesClient do
       expect(response.body).to eq('Response data')
     end
 
+    it 'sends an HTTP GET request with pagination parameters' do
+      stub_movies_api 'search_query', 'Response data', 200, 2
+
+      response = movies_client.search('search_query', 2)
+
+      expect(response.code).to eq(200)
+      expect(response.body).to eq('Response data')
+    end
+
     it 'handles network errors gracefully' do
       allow(ENV).to receive(:[]).with('MOVIES_API_URL').and_return('https://example.com/api/movies')
       allow(ENV).to receive(:[]).with('MOVIES_API_KEY').and_return('your_api_key')
-      stub_request(:get, 'https://example.com/api/movies?query=search_query').to_raise(Net::OpenTimeout)
+      stub_request(:get, 'https://example.com/api/movies?page=1&query=search_query').to_raise(Net::OpenTimeout)
 
       expect { movies_client.search 'search_query' }.to raise_error(Net::OpenTimeout)
     end

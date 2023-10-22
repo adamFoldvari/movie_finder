@@ -1,9 +1,9 @@
-def stub_movies_api(query = nil, response_body = {results: []}.to_json, response_status = 200)
+def stub_movies_api(query = nil, response_body = {results: []}.to_json, response_status = 200, page = 1)
   allow(ENV).to receive(:[]).with('MOVIES_API_URL').and_return('https://example.com/api/movies')
   allow(ENV).to receive(:[]).with('MOVIES_API_KEY').and_return('your_api_key')
 
   uri = URI('https://example.com/api/movies')
-  uri.query = URI.encode_www_form(query: query)
+  uri.query = URI.encode_www_form(query: query, page: page)
 
   stub_request(:get, uri).with(
     headers: {

@@ -7,8 +7,8 @@ class MoviesClient
     @api_key = ENV['MOVIES_API_KEY']
   end
 
-  def search(query)
-    uri = build_uri(query)
+  def search(query, page = 1)
+    uri = build_uri(query, page)
     request = build_request(uri)
 
     response = send_request(request)
@@ -18,9 +18,9 @@ class MoviesClient
 
   private
 
-  def build_uri(query)
+  def build_uri(query, page)
     uri = URI(@api_url)
-    uri.query = URI.encode_www_form(query: query)
+    uri.query = URI.encode_www_form(query: query, page: page)
     uri
   end
 
