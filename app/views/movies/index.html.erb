@@ -15,3 +15,11 @@
     <% end %>
   </ul>
 <% end %>
+
+<% if @total_pages && @total_pages > 1 %>
+  <div class="pagination">
+      <p>Page <%= @current_page %> of <%= @total_pages %></p>
+      <%= link_to "Previous", movies_path(query: params[:query], page: @current_page - 1), class: "prev" if @current_page > 1 %>
+      <%= link_to "Next", movies_path(query: params[:query], page: @current_page + 1), class: "next" if @current_page < @total_pages %>
+  </div>
+<% end %>
