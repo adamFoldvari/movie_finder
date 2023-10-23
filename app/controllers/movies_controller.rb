@@ -8,6 +8,7 @@ class MoviesController < ApplicationController
       end
     end
   rescue Net::OpenTimeout
+    flash[:notice] = nil
     flash[:alert] = "Network error: Unable to connect to the movie database API."
   end
 

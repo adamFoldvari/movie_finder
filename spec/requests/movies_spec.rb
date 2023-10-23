@@ -228,6 +228,16 @@ RSpec.describe "Movies", type: :request do
         expect(response.body).not_to have_tag('div.movie.card')
       end
 
+      it 'does not set an notice flash' do
+        expect(flash[:notice]).to be_nil
+      end
+
+      it 'does not render a notice message' do
+        expect(response.body).not_to have_tag('div.alert.alert-success.my-3.d-inline-block') do
+          without_tag 'span'
+        end
+      end
+
       it 'does not render pagination controls' do
         expect(response.body).not_to have_tag('nav.mt-4') do
           without_tag 'ul.pagination'
