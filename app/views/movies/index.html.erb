@@ -1,7 +1,7 @@
 <div class="container">
   <%= form_tag movies_path, method: :get, class: "mt-4" do %>
     <div class="input-group">
-      <%= text_field_tag :query, params[:query], class: "form-control", placeholder: 'Search for movies' %>
+      <%= text_field_tag :query, params[:query], class: "form-control", placeholder: 'Search for movies', required: true %>
       <button type="submit" class="btn btn-primary">Search</button>
     </div>
   <% end %>

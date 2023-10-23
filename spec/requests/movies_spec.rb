@@ -14,8 +14,8 @@ RSpec.describe "Movies", type: :request do
       end
 
       it 'renders input box and search button' do
-        expect(response.body).to have_tag('form', with: { action: movies_path, method: 'get' }) do
-          with_tag 'input', with: { type: 'text', name: 'query' }
+        expect(response.body).to have_tag('form', with: { action: movies_path, method: 'get'}) do
+          with_tag 'input', with: { type: 'text', name: 'query', required: 'required' }
           with_tag 'button', text: 'Search', with: { type: 'submit' }
         end
       end
