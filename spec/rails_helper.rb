@@ -28,6 +28,9 @@ require 'support/stub_movies_api'
 
 RSpec.configure do |config|
   config.include RSpecHtmlMatchers
+  config.before(:each) do
+    Rails.cache.clear
+  end
   # Remove this line to enable support for ActiveRecord
   config.use_active_record = false
 
