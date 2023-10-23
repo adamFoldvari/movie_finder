@@ -2,7 +2,10 @@ require 'uri'
 require 'net/http'
 
 class MoviesClient
-  def initialize
+  CACHE_TIME = 2.minutes
+
+  def initialize(cache_manager = CacheManager.new)
+    @cache_manager = cache_manager
     @api_url = ENV['MOVIES_API_URL']
     @api_key = ENV['MOVIES_API_KEY']
   end
@@ -11,9 +14,12 @@ class MoviesClient
     uri = build_uri(query, page)
     request = build_request(uri)
 
-    response = send_request(request)
+    response = @cache_manager.fetch(uri.to_s, expires_in: CACHE_TIME) do
+      response = send_request(request)
+      {code: response.code.to_i, body: response.read_body}
+    end
 
-    OpenStruct.new(code: response.code.to_i, body: response.read_body)
+    OpenStruct.new(response)
   end
 
   private
