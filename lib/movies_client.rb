@@ -26,7 +26,9 @@ class MoviesClient
 
   def build_uri(query, page)
     uri = URI(@api_url)
-    uri.query = URI.encode_www_form(query: query, page: page)
+    query_params = { query: query }
+    query_params[:page] = page if page > 1
+    uri.query = URI.encode_www_form(query_params)
     uri
   end
 

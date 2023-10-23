@@ -3,7 +3,9 @@ def stub_movies_api(query = nil, response_body = {results: []}.to_json, response
   allow(ENV).to receive(:[]).with('MOVIES_API_KEY').and_return('your_api_key')
 
   uri = URI('https://example.com/api/movies')
-  uri.query = URI.encode_www_form(query: query, page: page)
+  query_params = { query: query }
+  query_params[:page] = page if page > 1
+  uri.query = URI.encode_www_form(query_params)
 
   stub_request(:get, uri).with(
     headers: {

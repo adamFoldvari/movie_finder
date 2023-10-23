@@ -27,7 +27,7 @@ RSpec.describe MoviesClient do
     it 'handles network errors gracefully' do
       allow(ENV).to receive(:[]).with('MOVIES_API_URL').and_return('https://example.com/api/movies')
       allow(ENV).to receive(:[]).with('MOVIES_API_KEY').and_return('your_api_key')
-      stub_request(:get, 'https://example.com/api/movies?page=1&query=search_query').to_raise(Net::OpenTimeout)
+      stub_request(:get, 'https://example.com/api/movies?query=search_query').to_raise(Net::OpenTimeout)
 
       expect { movies_client.search 'search_query' }.to raise_error(Net::OpenTimeout)
     end
@@ -43,7 +43,7 @@ RSpec.describe MoviesClient do
 
     describe '#caching' do
       let(:query) { 'search_query' }
-      let(:cache_key) { "https://example.com/api/movies?query=#{query}&page=1" }
+      let(:cache_key) { "https://example.com/api/movies?query=#{query}" }
       let(:expected_response) { {"code":200,"body":"Response data"} }
 
       before do
