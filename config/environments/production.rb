@@ -2,7 +2,7 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
-  config.cache_store = :dalli_store, ENV['MEMCACHIER_SERVERS'], {
+  config.cache_store = :mem_cache_store, ENV['MEMCACHIER_SERVERS'], {
     username: ENV['MEMCACHIER_USERNAME'],
     password: ENV['MEMCACHIER_PASSWORD'],
     failover: true,
