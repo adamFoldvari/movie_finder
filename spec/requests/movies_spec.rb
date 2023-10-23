@@ -43,6 +43,16 @@ RSpec.describe "Movies", type: :request do
     end
 
     context 'there is a query and result' do
+      it 'renders input box and search button' do
+        stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
+        get movies_path, params: { query: query }
+
+        expect(response.body).to have_tag('form', with: { action: movies_path, method: 'get'}) do
+          with_tag 'input', with: { type: 'text', name: 'query', required: 'required' }
+          with_tag 'button', text: 'Search', with: { type: 'submit' }
+        end
+      end
+
       context 'with results from the API' do
         before do
           stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
