@@ -191,8 +191,8 @@ RSpec.describe "Movies", type: :request do
       end
 
       it 'renders the flash message' do
-        expect(response.body).to have_tag('div.alert.alert-danger.mt-3') do
-          with_tag 'p', text: 'Error: 404'
+        expect(response.body).to have_tag('div.alert.alert-danger.my-3') do
+          with_tag 'span', text: 'Error: 404'
         end
       end
 
@@ -219,8 +219,8 @@ RSpec.describe "Movies", type: :request do
       end
 
       it 'renders the flash message' do
-        expect(response.body).to have_tag('div.alert.alert-danger.mt-3') do
-          with_tag 'p', text: 'Network error: Unable to connect to the movie database API.'
+        expect(response.body).to have_tag('div.alert.alert-danger.my-3') do
+          with_tag 'span', text: 'Network error: Unable to connect to the movie database API.'
         end
       end
 
