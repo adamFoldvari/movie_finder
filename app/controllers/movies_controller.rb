@@ -1,9 +1,11 @@
 class MoviesController < ApplicationController
   def index
-    set_results_source_flash_message do
-      @current_page = (params[:page] || 1).to_i
-      response = MoviesClient.new.search(params[:query], @current_page)
-      handle_response(response)
+    if params[:query].present?
+      set_results_source_flash_message do
+        @current_page = (params[:page] || 1).to_i
+        response = MoviesClient.new.search(params[:query], @current_page)
+        handle_response(response)
+      end
     end
   rescue Net::OpenTimeout
     flash[:alert] = "Network error: Unable to connect to the movie database API."

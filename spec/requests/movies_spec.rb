@@ -6,7 +6,6 @@ RSpec.describe "Movies", type: :request do
 
     context 'there is no query and result' do
       before do
-        stub_movies_api
         get movies_path
       end
 
