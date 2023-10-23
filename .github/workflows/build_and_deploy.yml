@@ -24,3 +24,20 @@ jobs:
       - name: Run tests
         run: |
           bundle exec rspec
+
+  build-and-deploy:
+    name: Build and Staging deploy
+    needs:
+      - test
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Build, publish, deploy
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+        run: |
+          heroku container:login
+          heroku container:push web -a adam-movie-finder
+          heroku container:release web -a adam-movie-finder

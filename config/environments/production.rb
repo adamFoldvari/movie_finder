@@ -2,6 +2,13 @@ require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
   # Settings specified here will take precedence over those in config/application.rb.
+  config.cache_store = :dalli_store, ENV['MEMCACHIER_SERVERS'], {
+    username: ENV['MEMCACHIER_USERNAME'],
+    password: ENV['MEMCACHIER_PASSWORD'],
+    failover: true,
+    socket_timeout: 1.5,
+    socket_failure_delay: 0.2
+  }
 
   # Code is not reloaded between requests.
   config.cache_classes = true
