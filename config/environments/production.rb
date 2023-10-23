@@ -9,6 +9,7 @@ Rails.application.configure do
     socket_timeout: 1.5,
     socket_failure_delay: 0.2
   }
+  config.hosts << ENV['DEFAULT_HOST']
 
   # Code is not reloaded between requests.
   config.cache_classes = true
