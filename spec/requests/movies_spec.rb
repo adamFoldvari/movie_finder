@@ -21,6 +21,16 @@ RSpec.describe "Movies", type: :request do
         end
       end
 
+      it 'does not set an notice flash' do
+        expect(flash[:notice]).to be_nil
+      end
+
+      it 'does not render a notice message' do
+        expect(response.body).not_to have_tag('div.alert.alert-success.my-3.d-inline-block') do
+          without_tag 'span'
+        end
+      end
+
       it 'does not render movie list' do
         expect(response.body).not_to have_tag('div#movies.row.mt-4')
         expect(response.body).not_to have_tag('div.movie.card')
@@ -34,7 +44,7 @@ RSpec.describe "Movies", type: :request do
     end
 
     context 'there is a query and result' do
-      context 'without pagination' do
+      context 'with results from the API' do
         before do
           stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
           get movies_path, params: { query: query }
@@ -49,6 +59,52 @@ RSpec.describe "Movies", type: :request do
               end
             end
           end
+        end
+
+        it 'sets a notice flash' do
+          expect(flash[:notice]).to eq("Results fetched from the API.")
+        end
+
+        it 'renders a notice message' do
+          expect(response.body).to have_tag('div.alert.alert-success.my-3.d-inline-block') do
+            with_tag 'span', text: 'Results fetched from the API.'
+          end
+        end
+      end
+
+      context 'with results from the server' do
+        before do
+          stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
+          get movies_path, params: { query: query }
+          get movies_path, params: { query: query }
+        end
+
+        it 'renders movie list' do
+          expect(response.body).to have_tag('div#movies.row') do
+            with_tag('div.col-md-3.mb-4') do
+              with_tag 'div.card' do
+                with_tag 'img.card-img-top', with: { src: 'https://image.tmdb.org/t/p/w300/poster.jpg' }
+                with_tag 'h5.card-title', text: 'Batman'
+              end
+            end
+          end
+        end
+
+        it 'sets a notice flash' do
+          expect(flash[:notice]).to eq("Results fetched from the server.")
+        end
+
+        it 'renders a notice message' do
+          expect(response.body).to have_tag('div.alert.alert-success.my-3.d-inline-block') do
+            with_tag 'span', text: 'Results fetched from the server.'
+          end
+        end
+      end
+
+      context 'without pagination' do
+        before do
+          stub_movies_api query, {results: [{title: 'Batman', poster_path: 'poster.jpg'}]}.to_json
+          get movies_path, params: { query: query }
         end
 
         it 'does not render pagination controls' do

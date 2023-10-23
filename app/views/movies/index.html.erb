@@ -12,6 +12,12 @@
     </div>
   <% end %>
 
+  <% if flash[:notice] %>
+    <div class="alert alert-success my-3 d-inline-block">
+      <span><%= flash[:notice] %></span>
+    </div>
+  <% end %>
+
   <div class="row mt-4">
     <% if @movies.present? %>
       <% @movies.in_groups_of(4, false) do |group| %>
