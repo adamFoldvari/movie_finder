@@ -44,6 +44,8 @@ Here's some important information about this tech assessment:
         - Server-side UI rendering was used due to the straightforward nature of the frontend, eliminating the need for complex JavaScript.
     - **Testing Strategy**:
         - Request tests were employed to test the controller and view. This aligns with the default test type Rails generates for resources, offering comprehensive testing of the entire resource, including routes, controller actions, and associated views.
+    - **Cache hit counter**:
+        - The cache hit counter was implemented using the memcache service, over a more persistent service (eq.: database) due to the limited scope of the assessment.
 
 Feel free to explore the codebase and follow the setup instructions above to run the project. If you have any questions or need assistance, please don't hesitate to contact us.
 
